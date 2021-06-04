@@ -1,43 +1,21 @@
 <!doctype html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="author" content="ZXing for JS">
 
-    <title>ZXing TypeScript | Demo &amp; Examples</title>
-
-    <link rel="stylesheet preload" as="style" onload="this.rel='stylesheet';this.onload=null" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
-    <link rel="stylesheet preload" as="style" onload="this.rel='stylesheet';this.onload=null" href="https://unpkg.com/normalize.css@8.0.0/normalize.css">
-    <link rel="stylesheet preload" as="style" onload="this.rel='stylesheet';this.onload=null" href="https://unpkg.com/milligram@1.3.0/dist/milligram.min.css">
+    <title>Barcode scanner</title>
+    
+    <link rel="stylesheet" href="/css/barcode-scanner.css">
 </head>
-
 <body>
-
-    <main class="wrapper" style="padding-top:2em">
-
-        <section class="container" id="demo-content">
-            <h1 class="title">Scan barcode from Video Camera</h1>
-
-            <p>
-                <a class="button-small button-outline" href="../../index.html">HOME 🏡</a>
-            </p>
-
-            <p>
-                This example shows how to scan a barcode with ZXing javascript library from the device video camera. If more
-                than one video input devices are available (for example front and back camera) the example shows how to read
-                them and use a select to change the input device.
-            </p>
-
-            <div>
-                <a class="button" id="startButton">Start</a>
-                <a class="button" id="resetButton">Reset</a>
-            </div>
-
-            <div>
-                <video id="video" width="600" height="400" style="border: 1px solid gray"></video>
-            </div>
+ 
+<h1>Scan barcode</h1>
+<button id="scanBtn">Scan</button> <!-- Trigger/Open The Modal --> 
+<div id="scanModal" class="scan-modal"> <!-- The Modal --> 
+    <div class="scan-modal-content">
+        <span class="scan-close">&times;</span>
+            <video id="video" class="scan-modal-content"></video>
 
             <div id="sourceSelectPanel" style="display:none">
                 <label for="sourceSelect">Change video source:</label>
@@ -45,71 +23,69 @@
                 </select>
             </div>
 
-            <label>Result:</label>
-            <pre><code id="result"></code></pre>
+            <label>Scan Result:</label>
+            <pre><code id="result"></code></pre>   
+    </div>
+</div>
+    
+<script type="text/javascript" src="/js/@zxing/library/umd/index.min.js"></script>
+<script type="text/javascript">
+    var scanModal = document.getElementById("scanModal");
+	var scanBtn = document.getElementById("scanBtn");
+	console.log(scanBtn)
+	scanBtn.onclick = function() { scanModal.style.display = "block"; initScan();} // When the user clicks the button, open the modal
+	var closeSpan = document.getElementsByClassName("scan-close")[0];
+	closeSpan.onclick = function() { scanModal.style.display = "none"; } // When the user clicks on <span> (x), close the modal 
+	
+	// When the user clicks anywhere outside of the modal, close it 
+	window.onclick = function(event) {   
+	    if (event.target == scanModal) {
+	        scanModal.style.display = "none";   
+		} 
+	} 
 
-            <p>See the <a href="https://github.com/zxing-js/library/tree/master/docs/examples/barcode-camera/">source code</a>  for this example.</p>
-
-        </section>
-
-        <footer class="footer">
-            <section class="container">
-                <p>ZXing TypeScript Demo. Licensed under the <a target="_blank" href="https://github.com/zxing-js/library#license" title="MIT">MIT</a>.</p>
-            </section>
-        </footer>
-
-    </main>
-
-    <script type="text/javascript" src="/js/@zxing/library/umd/index.min.js"></script>
-    <script type="text/javascript">
-        window.addEventListener('load', function () {
-            let selectedDeviceId;
-            const codeReader = new ZXing.BrowserBarcodeReader()
-            console.log('ZXing code reader initialized')
-            codeReader.getVideoInputDevices()
-                .then((videoInputDevices) => {
-                    const sourceSelect = document.getElementById('sourceSelect')
-                    selectedDeviceId = videoInputDevices[0].deviceId
-                    if (videoInputDevices.length > 1) {
-                        videoInputDevices.forEach((element) => {
-                            const sourceOption = document.createElement('option')
-                            sourceOption.text = element.label
-                            sourceOption.value = element.deviceId
-                            sourceSelect.appendChild(sourceOption)
-                        })
-
-                        sourceSelect.onchange = () => {
-                            selectedDeviceId = sourceSelect.value;
-                        }
-
-                        const sourceSelectPanel = document.getElementById('sourceSelectPanel')
-                        sourceSelectPanel.style.display = 'block'
-                    }
-
-                    document.getElementById('startButton').addEventListener('click', () => {
-                        codeReader.decodeOnceFromVideoDevice(selectedDeviceId, 'video').then((result) => {
-                            console.log(result)
-                            document.getElementById('result').textContent = result.text
-                        }).catch((err) => {
-                            console.error(err)
-                            document.getElementById('result').textContent = err
-                        })
-                        console.log(`Started continous decode from camera with id ${selectedDeviceId}`)
+    function initScan(){    
+        let selectedDeviceId;
+        const barcodeReader = new ZXing.BrowserBarcodeReader()
+        console.log('Barcode reader initialized')
+        barcodeReader.getVideoInputDevices()
+            .then((videoInputDevices) => {
+                const sourceSelect = document.getElementById('sourceSelect')
+                selectedDeviceId = videoInputDevices[0].deviceId
+                
+                if (videoInputDevices.length > 1) {
+                    videoInputDevices.forEach((element) => {
+                        const sourceOption = document.createElement('option')
+                        sourceOption.text = element.label
+                        sourceOption.value = element.deviceId
+                        sourceSelect.appendChild(sourceOption)
                     })
 
-                    document.getElementById('resetButton').addEventListener('click', () => {
-                        document.getElementById('result').textContent = '';
-                        codeReader.reset();
-                        console.log('Reset.')
-                    })
+                    const sourceSelectPanel = document.getElementById('sourceSelectPanel')
+                    sourceSelectPanel.style.display = 'block'
+                    decodeBarcode(barcodeReader, selectedDeviceId)
+                }
 
-                })
-                .catch((err) => {
-                    console.error(err)
-                })
-        })
-    </script>
+				sourceSelect.onchange = () => {
+                    selectedDeviceId = sourceSelect.value
+                    decodeBarcode(barcodeReader, selectedDeviceId)
+                }	             
+            })
+            .catch((err) => {
+                console.error(err)
+            })
+	}
 
+	function decodeBarcode(barcodeReader, selectedDeviceId){
+		barcodeReader.decodeOnceFromVideoDevice(selectedDeviceId, 'video').then((result) => {
+	        console.log(result)
+	        document.getElementById('result').textContent = result.text
+	    }).catch((err) => {
+	        console.error(err)
+	        document.getElementById('result').textContent = err
+	    })
+	    console.log(`Started continous decode from camera with id ${selectedDeviceId}`)
+	}
+</script>
 </body>
-
 </html>
