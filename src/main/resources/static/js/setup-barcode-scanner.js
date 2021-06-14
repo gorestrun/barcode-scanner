@@ -2,15 +2,15 @@ const url = "/html/barcode-scanner.html"
 fetch(url)
 	.then(response => response.text())  
 	.then(html => {document.getElementById('barcode-scanner').innerHTML = html;})
-	.then(() => setupScanBarcodeModal())
+	.then(() => setupBarcodeScannerModal())
 	.catch((err) => console.log("Can’t access " + url + " response. Error: " + err))
  
-function setupScanBarcodeModal(){
-	let scanBarcodeModal = document.getElementById("barcodeScannerModal")
-	let scanBarcodeBtn = document.getElementById("barcodeScannerBtn")
-	let closeBarcodeModal = document.getElementsByClassName("barcode-scanner-close")[0]
-	scanBarcodeBtn.onclick = function() { scanBarcodeModal.style.display = "block"; initScan();} // When the user clicks the button, open the modal
-	closeBarcodeModal.onclick = function() { scanBarcodeModal.style.display = "none"; } // When the user clicks on <span> (x), close the modal 
+function setupBarcodeScannerModal(){
+	let barcodeScannerModal = document.getElementById("barcodeScannerModal")
+	let barcodeScannerBtn = document.getElementById("barcodeScannerBtn")
+	let barcodeCloseModal = document.getElementsByClassName("barcode-scanner-close")[0]
+	barcodeScannerBtn.onclick = function() { barcodeScannerModal.style.display = "block"; initScan();} // When the user clicks the button, open the modal
+	barcodeCloseModal.onclick = function() { barcodeScannerModal.style.display = "none"; } // When the user clicks on <span> (x), close the modal 
 }
 
 function initScan(){    
@@ -21,7 +21,7 @@ function initScan(){
         .then((videoInputDevices) => {
             const sourceSelect = document.getElementById('barcodeScannerSourceSelect')
             selectedDeviceId = videoInputDevices[0].deviceId
-            
+    
             if (videoInputDevices.length > 1) {
                 videoInputDevices.forEach((element) => {
                     const sourceOption = document.createElement('option')
