@@ -1,34 +1,40 @@
-.scan-modal {   
-    display: none; /* Hidden by default */   
-    position: fixed; /* Stay in place */   
-    z-index: 1; /* Sit on top */
-    padding-top: 100px; /* Location of the box */
-    left: 0;   
-    top: 0;   
-    width: 100%; /* Full width */   
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */ 
+.barcode-scanner-modal {   
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    
+    display: none; 
+    border: 1px solid red;  
+    z-index: 1;
+    
+    width: 90%;
+    height: 90%;
+    overflow: hidden;
+    
+    background-color: rgba(0,0,0);
 }
 
-.scan-modal-content {   
-    background-color: #fefefe;   
-    margin: auto;   
-    padding: 0px;   
-    border: 1px solid #888;   
-    width: 80%; 
+.barcode-scanner-close { 
+    color: #ffffff;
+    float: right;
+    font-size: 40px;   
+    font-weight: bold;
+    margin-right: 5px;
 }
 
-.scan-close {   
-    color: #aaaaaa;   
-    float: right;   
-    font-size: 28px;   
-    font-weight: bold; 
-}
-
-.scan-close:hover, .close:focus {   
+.barcode-scanner-close:hover, .close:focus {   
     color: #000;   
     text-decoration: none;   
     cursor: pointer; 
+}
+
+.video {
+	width: 100%;
+	height: 80%;
+}
+
+.barcode-scanner-source-select-panel, .barcode-scanner-source-select, .barcode-scanner-result-panel{
+	color: #ffffff;
+	margin-left: 5px;
 }

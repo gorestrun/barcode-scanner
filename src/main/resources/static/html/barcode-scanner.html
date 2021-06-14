@@ -1,0 +1,17 @@
+<button id="barcodeScannerBtn">Scan</button> <!-- Trigger/Open The Modal --> 
+<div id="barcodeScannerModal" class="barcode-scanner-modal"> <!-- The Modal --> 
+    
+    	<span class="barcode-scanner-close">&times;</span>
+	    <video id="video" class="video"></video>
+		
+	    <div id="barcodeScannerSourceSelectPanel" style="display:none" class="barcode-scanner-source-select-panel">
+	        <label for="barcodeScannerSourceSelectLabel">Select Camera:</label>
+	        <select id="barcodeScannerSourceSelect" class="barcode-scanner-source-select">
+	        </select>
+	    </div>
+	
+		<div class="barcode-scanner-result-panel">
+		    <label>Barcode:</label>
+		    <code id="barcode"></code>   
+		</div>
+</div>

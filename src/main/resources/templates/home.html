@@ -5,87 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Barcode scanner</title>
-    
     <link rel="stylesheet" href="/css/barcode-scanner.css">
+    
 </head>
 <body>
  
 <h1>Scan barcode</h1>
-<button id="scanBtn">Scan</button> <!-- Trigger/Open The Modal --> 
-<div id="scanModal" class="scan-modal"> <!-- The Modal --> 
-    <div class="scan-modal-content">
-        <span class="scan-close">&times;</span>
-            <video id="video" class="scan-modal-content"></video>
-
-            <div id="sourceSelectPanel" style="display:none">
-                <label for="sourceSelect">Change video source:</label>
-                <select id="sourceSelect" style="max-width:400px">
-                </select>
-            </div>
-
-            <label>Scan Result:</label>
-            <pre><code id="result"></code></pre>   
-    </div>
-</div>
-    
+<div id="barcode-scanner"></div>
 <script type="text/javascript" src="/js/@zxing/library/umd/index.min.js"></script>
-<script type="text/javascript">
-    var scanModal = document.getElementById("scanModal");
-	var scanBtn = document.getElementById("scanBtn");
-	console.log(scanBtn)
-	scanBtn.onclick = function() { scanModal.style.display = "block"; initScan();} // When the user clicks the button, open the modal
-	var closeSpan = document.getElementsByClassName("scan-close")[0];
-	closeSpan.onclick = function() { scanModal.style.display = "none"; } // When the user clicks on <span> (x), close the modal 
-	
-	// When the user clicks anywhere outside of the modal, close it 
-	window.onclick = function(event) {   
-	    if (event.target == scanModal) {
-	        scanModal.style.display = "none";   
-		} 
-	} 
+<script type="text/javascript" src="/js/setup-barcode-scanner.js"></script>
 
-    function initScan(){    
-        let selectedDeviceId;
-        const barcodeReader = new ZXing.BrowserBarcodeReader()
-        console.log('Barcode reader initialized')
-        barcodeReader.getVideoInputDevices()
-            .then((videoInputDevices) => {
-                const sourceSelect = document.getElementById('sourceSelect')
-                selectedDeviceId = videoInputDevices[0].deviceId
-                
-                if (videoInputDevices.length > 1) {
-                    videoInputDevices.forEach((element) => {
-                        const sourceOption = document.createElement('option')
-                        sourceOption.text = element.label
-                        sourceOption.value = element.deviceId
-                        sourceSelect.appendChild(sourceOption)
-                    })
 
-                    const sourceSelectPanel = document.getElementById('sourceSelectPanel')
-                    sourceSelectPanel.style.display = 'block'
-                    decodeBarcode(barcodeReader, selectedDeviceId)
-                }
-
-				sourceSelect.onchange = () => {
-                    selectedDeviceId = sourceSelect.value
-                    decodeBarcode(barcodeReader, selectedDeviceId)
-                }	             
-            })
-            .catch((err) => {
-                console.error(err)
-            })
-	}
-
-	function decodeBarcode(barcodeReader, selectedDeviceId){
-		barcodeReader.decodeOnceFromVideoDevice(selectedDeviceId, 'video').then((result) => {
-	        console.log(result)
-	        document.getElementById('result').textContent = result.text
-	    }).catch((err) => {
-	        console.error(err)
-	        document.getElementById('result').textContent = err
-	    })
-	    console.log(`Started continous decode from camera with id ${selectedDeviceId}`)
-	}
-</script>
 </body>
 </html>
