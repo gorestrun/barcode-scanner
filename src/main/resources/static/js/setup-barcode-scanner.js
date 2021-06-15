@@ -1,22 +1,23 @@
+//Does not work well with decorators, sitemesh, ...
 const url = "/html/barcode-scanner.html";
 fetch(url)
 	.then(response => response.text())  
 	.then(html => {document.getElementById('barcode-scanner').innerHTML = html;})
-	.then(() => setupBarcodeScannerModal())
+	.then(() => {
+		document.getElementById("barcodeScannerBtn").onclick = function() { 
+			document.getElementById("barcodeScannerModal").style.display = "block";
+		};
+	
+		document.getElementsByClassName("barcode-scanner-close")[0].onclick = function() { 
+			barcodeScannerModal.style.display = "none"; 
+		};
+	 })
 	.catch((err) => console.log("Can’t access " + url + " response. Error: " + err));
- 
-function setupBarcodeScannerModal(){
-	let barcodeScannerModal = document.getElementById("barcodeScannerModal");
-	let barcodeScannerBtn = document.getElementById("barcodeScannerBtn");
-	let barcodeCloseModal = document.getElementsByClassName("barcode-scanner-close")[0];
-	barcodeScannerBtn.onclick = function() { barcodeScannerModal.style.display = "block"; initScan();}; // When the user clicks the button, open the modal
-	barcodeCloseModal.onclick = function() { barcodeScannerModal.style.display = "none"; }; // When the user clicks on <span> (x), close the modal 
-}
 
-function initScan(){    
+window.addEventListener('load', function(){    
     let selectedDeviceId;
     const barcodeReader = new ZXing.BrowserBarcodeReader();
-    console.log('Barcode reader initialized');
+    console.log('Window loaded, barcode reader initialized');
     barcodeReader.getVideoInputDevices()
         .then((videoInputDevices) => {
             const sourceSelect = document.getElementById('barcodeScannerSourceSelect');
@@ -30,29 +31,27 @@ function initScan(){
                     
                     sourceSelect.appendChild(sourceOption);
                 })
-
+				
+				sourceSelect.onchange = () => {
+                	selectedDeviceId = sourceSelect.value;
+            	}	        
+            
                 const sourceSelectPanel = document.getElementById('barcodeScannerSourceSelectPanel');
                 sourceSelectPanel.style.display = 'block';
-                decodeBarcode(barcodeReader, selectedDeviceId);
             }
-
-			sourceSelect.onchange = () => {
-                selectedDeviceId = sourceSelect.value;
-                decodeBarcode(barcodeReader, selectedDeviceId);
-            }	             
+            
+            document.getElementById('barcodeScannerBtn').addEventListener('click', () => {
+					barcodeReader.decodeOnceFromVideoDevice(selectedDeviceId, 'video').then((result) => {
+			        console.log(result);
+			        document.getElementById('barcode').textContent = result.text;
+			    }).catch((err) => {
+			        console.error(err);
+			        document.getElementById('barcode').textContent = ''; //When the user change camera source, an error will be displayed. We do not want this.
+			    })
+			    console.log(`Started continuous decode from camera with id ${selectedDeviceId}`)
+			})
         })
         .catch((err) => {
             console.error(err);
         })
-}
-
-function decodeBarcode(barcodeReader, selectedDeviceId){
-	barcodeReader.decodeOnceFromVideoDevice(selectedDeviceId, 'video').then((result) => {
-        console.log(result);
-        document.getElementById('barcode').textContent = result.text;
-    }).catch((err) => {
-        console.error(err);
-        document.getElementById('barcode').textContent = ''; //When the user change camera source, an error will be displayed. We do not want this.
-    })
-    console.log(`Started continuous decode from camera with id ${selectedDeviceId}`)
-}
+})
