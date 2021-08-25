@@ -39,9 +39,9 @@ window.addEventListener('load', function(){
                     sourceSelect.appendChild(sourceOption);
                 })
 				
-				sourceSelect.onchange = () => {
+		    sourceSelect.onchange = () => {
                 	selectedDeviceId = sourceSelect.value;
-                    if(selectedDeviceId != ""){
+                    if(selectedDeviceId !== ""){
                         decode(barcodeReader, selectedDeviceId);
                     }
             	}	        
