@@ -40,7 +40,8 @@ window.addEventListener('load', function(){
                 })
 				
 				sourceSelect.onchange = () => {
-                	selectedDeviceId = sourceSelect.value;
+                    reset(barcodeReader);
+                    selectedDeviceId = sourceSelect.value;
                     if(selectedDeviceId != ""){
                         decode(barcodeReader, selectedDeviceId);
                     }
@@ -66,7 +67,12 @@ function decode(barcodeReader, selectedDeviceId){
         document.getElementById('barcode').textContent = result.text;
     }).catch((err) => {
         console.error(err);
-        document.getElementById('barcode').textContent = ''; //When the user change camera source, an error will be displayed. We do not want this.
+        reset(barcodeReader);
     })
     console.log(`Started continuous decode from camera with id ${selectedDeviceId}`)
+}
+
+function reset(barcodeReader){
+    barcodeReader.reset();
+    document.getElementById('barcode').textContent = ''; //When the user change camera source, an error will be displayed. We do not want this.
 }
