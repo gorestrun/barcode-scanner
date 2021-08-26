@@ -39,8 +39,8 @@ window.addEventListener('load', function(){
                     sourceSelect.appendChild(sourceOption);
                 })
 				
-				sourceSelect.onchange = () => {
-                    reset(barcodeReader);
+		    sourceSelect.onchange = () => {
+                    clear();
                     selectedDeviceId = sourceSelect.value;
                     if(selectedDeviceId !== ""){
                         decode(barcodeReader, selectedDeviceId);
@@ -52,8 +52,9 @@ window.addEventListener('load', function(){
             }
 
             document.getElementById('barcodeScannerBtn').addEventListener('click', () => {
+		clear(); //To clear any previous data(if any)
                 decode(barcodeReader, undefined); //undefined will force the camera to point to the back camera(environment facing)
-			})
+	    })
         })
         .catch((err) => {
             console.error(err);
@@ -61,18 +62,16 @@ window.addEventListener('load', function(){
 })
 
 function decode(barcodeReader, selectedDeviceId){
-
 	barcodeReader.decodeOnceFromVideoDevice(selectedDeviceId, 'video').then((result) => {
         console.log("Decoded value:" + result);
         document.getElementById('barcode').textContent = result.text;
     }).catch((err) => {
         console.error(err);
-        reset(barcodeReader);
+        clear();
     })
     console.log(`Started continuous decode from camera with id ${selectedDeviceId}`)
 }
 
-function reset(barcodeReader){
-    barcodeReader.reset();
+function clear(){
     document.getElementById('barcode').textContent = ''; //When the user change camera source, an error will be displayed. We do not want this.
 }
