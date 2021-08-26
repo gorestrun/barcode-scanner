@@ -42,7 +42,7 @@ window.addEventListener('load', function(){
 				sourceSelect.onchange = () => {
                     reset(barcodeReader);
                     selectedDeviceId = sourceSelect.value;
-                    if(selectedDeviceId != ""){
+                    if(selectedDeviceId !== ""){
                         decode(barcodeReader, selectedDeviceId);
                     }
             	}	        
